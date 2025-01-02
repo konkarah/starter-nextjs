@@ -1,117 +1,90 @@
-import { BRAND } from "@/types/brand";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'; // Heroicons for edit and delete icons
 
-const brandData: BRAND[] = [
-  {
-    logo: "/images/brand/brand-01.svg",
-    name: "Google",
-    visitors: 3.5,
-    revenues: "5,768",
-    sales: 590,
-    conversion: 4.8,
-  },
-  {
-    logo: "/images/brand/brand-02.svg",
-    name: "Twitter",
-    visitors: 2.2,
-    revenues: "4,635",
-    sales: 467,
-    conversion: 4.3,
-  },
-  {
-    logo: "/images/brand/brand-03.svg",
-    name: "Github",
-    visitors: 2.1,
-    revenues: "4,290",
-    sales: 420,
-    conversion: 3.7,
-  },
-  {
-    logo: "/images/brand/brand-04.svg",
-    name: "Vimeo",
-    visitors: 1.5,
-    revenues: "3,580",
-    sales: 389,
-    conversion: 2.5,
-  },
-  {
-    logo: "/images/brand/brand-05.svg",
-    name: "Facebook",
-    visitors: 3.5,
-    revenues: "6,768",
-    sales: 390,
-    conversion: 4.2,
-  },
-];
+type Designation = {
+  id: string;
+  DesignationName: string;
+  Department: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 const TableOne = () => {
+  // State to hold the fetched designations data
+  const [designations, setDesignations] = useState<Designation[]>([]);
+
+  useEffect(() => {
+    // Fetching designations data from the API
+    fetch("http://localhost:3002/designations") // Replace with your actual endpoint
+      .then((response) => response.json())
+      .then((data) => setDesignations(data)) // Set the designations data to state
+      .catch((error) => console.error("Error fetching designations:", error));
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
+
+  // Placeholder function for editing a designation
+  const handleEdit = (id: string) => {
+    console.log("Edit designation with id:", id);
+    // Implement your edit logic here (e.g., show a modal or navigate to an edit page)
+  };
+
+  // Placeholder function for deleting a designation
+  const handleDelete = (id: string) => {
+    console.log("Delete designation with id:", id);
+    // Implement your delete logic here (e.g., show a confirmation dialog and make an API request)
+  };
+
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-        Top Channels
+        Designations
       </h4>
 
       <div className="flex flex-col">
+        {/* Designations Data Table */}
         <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
           <div className="p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Source
+              Designation Name
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Visitors
+              Department
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Revenues
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Sales
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Conversion
+              Actions
             </h5>
           </div>
         </div>
 
-        {brandData.map((brand, key) => (
+        {designations.map((designation) => (
           <div
-            className={`grid grid-cols-3 sm:grid-cols-5 ${
-              key === brandData.length - 1
-                ? ""
-                : "border-b border-stroke dark:border-strokedark"
-            }`}
-            key={key}
+            key={designation.id}
+            className="grid grid-cols-3 sm:grid-cols-5 border-b border-stroke dark:border-strokedark"
           >
             <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <div className="flex-shrink-0">
-                <Image src={brand.logo} alt="Brand" width={48} height={48} />
-              </div>
-              <p className="hidden text-black dark:text-white sm:block">
-                {brand.name}
-              </p>
+              <p className="text-black dark:text-white">{designation.DesignationName}</p>
             </div>
-
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{brand.visitors}K</p>
+              <p className="text-black dark:text-white">{designation.Department}</p>
             </div>
 
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-meta-3">${brand.revenues}</p>
-            </div>
-
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-black dark:text-white">{brand.sales}</p>
-            </div>
-
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-meta-5">{brand.conversion}%</p>
+            {/* Actions Column */}
+            <div className="flex items-center justify-center p-2.5 xl:p-5 gap-3">
+              <button
+                onClick={() => handleEdit(designation.id)}
+                className="text-blue-500 hover:text-blue-700"
+              >
+                <PencilIcon className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => handleDelete(designation.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <TrashIcon className="h-5 w-5" />
+              </button>
             </div>
           </div>
         ))}

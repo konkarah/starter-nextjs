@@ -1,6 +1,24 @@
+"use client";
 import Breadcrumb from "../Breadcrumbs/Breadcrumb";
+import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Calendar = () => {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (!session) {
+    return (
+      <div>
+        <p>You are not signed in!</p>
+        <button onClick={() => signIn()}>Sign In</button>
+      </div>
+    );
+  }
   return (
     <div className="mx-auto max-w-7xl">
       <Breadcrumb pageName="Calendar" />

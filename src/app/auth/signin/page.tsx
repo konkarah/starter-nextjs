@@ -1,16 +1,77 @@
-import React from "react";
+'use client';
+
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { useRouter } from "next/router";
+import { signIn } from "next-auth/react";
 
-export const metadata: Metadata = {
-  title: "Next.js SignIn Page | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Signin Page TailAdmin Dashboard Template",
-};
+// export const metadata: Metadata = {
+//   title: "Next.js SignIn Page | TailAdmin - Next.js Dashboard Template",
+//   description: "This is Next.js Signin Page TailAdmin Dashboard Template",
+// };
 
 const SignIn: React.FC = () => {
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState('');
+  // const router = useRouter();
+
+  // Handle form submission
+  // const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  //   e.preventDefault(); // Prevent the default form submission behavior
+  //   setLoading(true);
+  //   setError(''); // Clear previous errors if any
+
+  //   // Example of calling a mock API endpoint to handle sign-in
+  //   try {
+  //     const response = await fetch('http://localhost:3000/api/auth/login', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       // Handle successful login (e.g., redirect or set user state)
+  //       console.log('Logged in successfully:', data);
+  //     } else {
+  //       // Handle failed login (show error message)
+  //       setError(data.message || 'Something went wrong!');
+  //     }
+  //   } catch (err) {
+  //     console.error('Error signing in:', err);
+  //     setError('An error occurred while trying to sign in.');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    console.log(result)
+
+    if (result?.error) {
+      alert("Authentication failed");
+    } else {
+      window.location.href = "/";  // Redirect to dashboard on success
+    }
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Sign In" />
@@ -182,6 +243,7 @@ const SignIn: React.FC = () => {
                     <input
                       type="email"
                       placeholder="Enter your email"
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -213,6 +275,7 @@ const SignIn: React.FC = () => {
                     <input
                       type="password"
                       placeholder="6+ Characters, 1 Capital letter"
+                      onChange={(e) => setPassword(e.target.value)}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -245,6 +308,7 @@ const SignIn: React.FC = () => {
                     type="submit"
                     value="Sign In"
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                    onClick={handleSubmit}
                   />
                 </div>
 
